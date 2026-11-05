@@ -96,13 +96,30 @@ production traffic.
 ## Cloudflare Workers deployment
 
 This project includes the OpenNext Cloudflare adapter and Wrangler configuration.
-The first local runtime preview is `npm run cf:preview`; it runs the app in the
-Workers runtime without publishing it. After creating a Cloudflare account, run
-`npx wrangler login`, check `wrangler.jsonc`'s Worker name if it is already in
-use, then use `npm run cf:deploy` to publish to the account's `workers.dev`
-hostname. See the [OpenNext Cloudflare guide](https://opennext.js.org/cloudflare/get-started)
+The GitHub Actions workflow **Deploy MedSprint to Cloudflare Workers** can build
+and deploy the app to a Cloudflare `workers.dev` hostname using Cloudflare's
+free Workers plan, within its current usage limits. It is manual: open the
+repository's Actions tab, select the workflow, and choose **Run workflow**.
+
+Before running it, configure the following in the GitHub repository under
+Settings > Secrets and variables > Actions:
+
+- Add `CLOUDFLARE_API_TOKEN` as a repository secret. Create a Cloudflare API
+  token with the Workers deployment permissions required by Wrangler.
+- Add these repository variables: `CLOUDFLARE_ACCOUNT_ID`,
+  `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- Set `NEXT_PUBLIC_APP_URL` to the final `https://<worker>.<account-subdomain>.workers.dev`
+  origin. The account's `workers.dev` subdomain must be enabled in Cloudflare.
+
+The Supabase URL and anon key are public client configuration. Do not put
+`SUPABASE_SERVICE_ROLE_KEY`, Stripe secrets, or other private keys in repository
+variables or source code. Add optional server-side secrets through the Worker
+settings in Cloudflare after deployment. The GitHub workflow does not deploy
+until all five required settings are present. For a local runtime preview,
+`npm run cf:preview` runs the app in the Workers runtime without publishing it.
+See the [OpenNext Cloudflare guide](https://opennext.js.org/cloudflare/get-started)
 and [Wrangler documentation](https://developers.cloudflare.com/workers/wrangler/).
-The local Worker preview was verified; account deployment is still pending.
 
 Set `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and
 `NEXT_PUBLIC_SUPABASE_ANON_KEY` as build-time variables before deploying; Next.js
