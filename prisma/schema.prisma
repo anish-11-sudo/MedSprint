@@ -1,0 +1,10 @@
+// The SQL migration in supabase/migrations is the source of truth.
+// After running it, generate models with:  npx prisma db pull && npx prisma generate
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
